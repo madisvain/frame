@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<title>Structural analysis by Madis Väin</title>
+	
+    <link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}/less/styles.less" media="screen, print">
+    
+    <script type="text/javascript" src="{{ STATIC_URL }}js/less-1.2.1.min.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.1/mootools-yui-compressed.js"></script>
+	<script type="text/javascript">
+		window.addEvent('domready',function() {
+			// Menu showing and hiding
+			$('menu-hide').addEvent('click', function(e) {
+				e.stop();
+				$('menu').tween('width', 0);
+				$('menu-show').setStyle('display', 'block');
+				$('menu-show').tween('width', 10);
+				$('interface').setStyle('display', 'none');
+			});
+			$('menu-show').addEvent('click', function(e) {
+				e.stop();
+				$('menu').tween('width', 200);
+				$('menu-show').setStyle('display', 'none');
+				$('menu-show').tween('width', 0);
+			});
+			
+			// Interface showing and hiding
+			$$('#menu li:not(:first-of-type)').addEvent('click', function(e) {
+				var interface = $('interface');
+				
+				// Members and joints
+				if (this.getProperty('class') == 'membersandjoints') {
+					interface.getElement('h2').set('text', 'Members & Joints');
+					$('interface-content').load('{% url members %}');
+					$('interface-content').setStyle('display', 'block');
+				}
+				// Supports
+				if (this.getProperty('class') == 'supports') {
+					interface.getElement('h2').set('text', 'Supports');
+					$('interface-content').load('{% url supports %}');
+					$('interface-content').setStyle('display', 'block');
+				}
+				
+				// Loads
+				if (this.getProperty('class') == 'loads') {
+					interface.getElement('h2').set('text', 'Loads');
+					$('interface-content').load('{% url loads %}');
+					$('interface-content').setStyle('display', 'block');
+				}
+				
+				// Show interface
+				interface.setStyle('display', 'block');
+			});
+			$('interface-hide').addEvent('click', function() {
+				$('interface').setStyle('display', 'none');
+				$('interface-content').setStyle('display', 'none');
+			});
+		});
+	</script>
+</head>
+<body>
+	<embed src="{% url svg %}" type="image/svg+xml" />
+	<!--<object id="plot" data="{% url svg %}" type="image/svg+xml"></object>-->
+	
+	<div id="menu">
+		<ul>
+			<li id="menu-hide">
+				<h3>
+					<a href="#">
+						<img src="{{ STATIC_URL }}img/arrow-right.png" alt="" />
+						<img src="{{ STATIC_URL }}img/arrow-right.png" alt="" />
+					</a>
+				</h3>
+			</li>
+			<li class="membersandjoints">
+				<h3>
+					<a href="#" class="interface">Members & Joints<br/>
+						<small>
+							4 joints<br/>
+							3 supports
+						</small>
+					</a>
+				</h3>
+			</li>
+			<li class="supports">
+				<h3>
+					<a href="#">Supports<br/>
+						<small>
+							3 members<br/>
+						</small>
+					</a></h3>
+			</li>
+			<li class="loads">
+				<h3>
+					<a href="#">Loads<br/>
+						<small>
+							- concentrated<br/>
+							- distributed<br/>
+							- moments
+						</small>
+					</a>
+				</h3>
+			</li>
+		</ul>
+	</div>
+	<div id="menu-show">
+		<a href="#">
+			<img src="{{ STATIC_URL }}img/arrow-left.png" alt="" />
+			<img src="{{ STATIC_URL }}img/arrow-left.png" alt="" />
+		</a>
+	</div>
+	<div id="interface">
+		<div id="interface-title">
+			<h2></h2>
+			<a href="#" id="interface-hide">Close</a>
+		</div>
+		<div id="interface-content"></div>
+	</div>
+</body>
+</html>
