@@ -1,16 +1,17 @@
 #coding: utf-8
 
-import cStringIO
-import numpy as np
-import matplotlib
-matplotlib.use('Svg')
-matplotlib.rcParams['axes.linewidth'] = 0.5
-import matplotlib.pyplot as plt
-
 from django.shortcuts import render
 from django.http import HttpResponse
 
+from frame.structure.forms import NodeForm, ElementForm
+
+def home(request):
+    return render(request, 'members.html')
+
 def members(request):
+    node_form = NodeForm(request.POST or None)
+    element_form = ElementForm(request.POST or None)
+    
     return render(request, 'members.html')
 
 def supports(request):
@@ -20,6 +21,13 @@ def loads(request):
     return render(request, 'members.html')
 
 def svg(request, width=None, height=None):
+    import cStringIO
+    import numpy as np
+    import matplotlib
+    matplotlib.use('Svg')
+    matplotlib.rcParams['axes.linewidth'] = 0.5
+    import matplotlib.pyplot as plt
+    
     fig = plt.figure(frameon=False)
     
     ax = fig.add_subplot(111)

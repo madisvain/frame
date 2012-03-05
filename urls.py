@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     url(r'^$', direct_to_template, {'template': 'base.html'}, name='home'),
     
     # Interface
-    url(r'^members/$', direct_to_template, {'template': 'members.html'}, name='members'),
+    url(r'^members/$', 'structure.views.members', name='members'),
     url(r'^supports/$', direct_to_template, {'template': 'supports.html'}, name='supports'),
     url(r'^loads/$', direct_to_template, {'template': 'loads.html'}, name='loads'),
     
