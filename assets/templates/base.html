@@ -35,12 +35,6 @@
 					$('interface-content').load('{% url members %}');
 					$('interface-content').setStyle('display', 'block');
 				}
-				// Supports
-				if (this.getProperty('class') == 'supports') {
-					interface.getElement('h2').set('text', 'Supports');
-					$('interface-content').load('{% url supports %}');
-					$('interface-content').setStyle('display', 'block');
-				}
 				
 				// Loads
 				if (this.getProperty('class') == 'loads') {
@@ -75,21 +69,13 @@
 			</li>
 			<li class="membersandjoints">
 				<h3>
-					<a href="#" class="interface">Members & Joints<br/>
+					<a href="#" class="interface">Members & Supports<br/>
 						<small>
 							4 joints<br/>
 							3 supports
 						</small>
 					</a>
 				</h3>
-			</li>
-			<li class="supports">
-				<h3>
-					<a href="#">Supports<br/>
-						<small>
-							3 members<br/>
-						</small>
-					</a></h3>
 			</li>
 			<li class="loads">
 				<h3>

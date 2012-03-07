@@ -4,7 +4,7 @@ from django.forms import ModelForm
 from frame.structure.models import Frame, Node, Element
 
 
-class Frame(ModelForm):
+class FrameForm(ModelForm):
     class Meta:
         model = Frame
 

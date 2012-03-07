@@ -9,7 +9,9 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('',
     # Main template
-    url(r'^$', direct_to_template, {'template': 'base.html'}, name='home'),
+    url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),
+    url(r'^new/$', 'frame.structure.views.new_frame', name='new_frame'),
+    url(r'^frame/(?P<uuid>[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/$', direct_to_template, {'template': 'base.html'}, name='frame'),
     
     # Interface
     url(r'^members/$', 'structure.views.members', name='members'),

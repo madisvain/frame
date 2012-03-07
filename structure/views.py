@@ -1,24 +1,40 @@
 #coding: utf-8
 
-from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.forms.models import inlineformset_factory
 
-from frame.structure.forms import NodeForm, ElementForm
+from frame.structure.models import Frame, Node, Element
+from frame.structure.forms import FrameForm
 
 def home(request):
-    return render(request, 'members.html')
+    return render(request, 'home.html')
 
-def members(request):
-    node_form = NodeForm(request.POST or None)
-    element_form = ElementForm(request.POST or None)
+def new_frame(request):
+    form = FrameForm(request.POST or None)
+    if request.POST and form.is_valid():
+        frame = form.save()
+        redirect('frame', uuid=frame.uuid)
+        
+    return render(request, 'new.html', {
+        'form': form
+    })
+
+def members(request, uuid):
+    frame = get_object_or_404(Frame, uuid=uuid)
     
-    return render(request, 'members.html')
-
-def supports(request):
-    return render(request, 'members.html')
+    # Node formset
+    NodeFormSet = inlineformset_factory(Frame, Node)
+    node_formset = NodeFormSet(instance=frame)
+    
+    # Element formset
+    ElementFormSet = inlineformset_factory(Frame, Element)
+    element_formset = ElementFormSet(instance=frame)
+    
+    return render(request, 'members.html', node_formset=node_formset)
 
 def loads(request):
-    return render(request, 'members.html')
+    return render(request, 'loads.html')
 
 def svg(request, width=None, height=None):
     import cStringIO
