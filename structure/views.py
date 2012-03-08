@@ -14,29 +14,35 @@ def new_frame(request):
     form = FrameForm(request.POST or None)
     if request.POST and form.is_valid():
         frame = form.save()
-        redirect('frame', uuid=frame.uuid)
+        return redirect('frame', uuid=frame.uuid)
         
     return render(request, 'new.html', {
         'form': form
+    })
+
+def frame(request, uuid):
+    frame = get_object_or_404(Frame, uuid=uuid)
+    
+    return render(request, 'frame.html', {
+        'frame': frame
     })
 
 def members(request, uuid):
     frame = get_object_or_404(Frame, uuid=uuid)
     
     # Node formset
-    NodeFormSet = inlineformset_factory(Frame, Node)
+    NodeFormSet = inlineformset_factory(Frame, Node, extra=2)
     node_formset = NodeFormSet(instance=frame)
     
-    # Element formset
-    ElementFormSet = inlineformset_factory(Frame, Element)
-    element_formset = ElementFormSet(instance=frame)
-    
-    return render(request, 'members.html', node_formset=node_formset)
+    return render(request, 'members.html', {
+        'frame': frame,
+        'formset': node_formset,
+    })
 
-def loads(request):
+def loads(request, uuid=None):
     return render(request, 'loads.html')
 
-def svg(request, width=None, height=None):
+def svg(request, uuid=None, width=None, height=None):
     import cStringIO
     import numpy as np
     import matplotlib

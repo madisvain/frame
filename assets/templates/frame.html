@@ -1,3 +1,5 @@
+{% load url from future %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,7 +11,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/less-1.2.1.min.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.1/mootools-yui-compressed.js"></script>
 	<script type="text/javascript">
-		window.addEvent('domready',function() {
+		window.addEvent('domready', function() {
 			// Menu showing and hiding
 			$('menu-hide').addEvent('click', function(e) {
 				e.stop();
@@ -32,14 +34,14 @@
 				// Members and joints
 				if (this.getProperty('class') == 'membersandjoints') {
 					interface.getElement('h2').set('text', 'Members & Joints');
-					$('interface-content').load('{% url members %}');
+					$('interface-content').load('{% url 'members' frame.uuid %}');
 					$('interface-content').setStyle('display', 'block');
 				}
 				
 				// Loads
 				if (this.getProperty('class') == 'loads') {
 					interface.getElement('h2').set('text', 'Loads');
-					$('interface-content').load('{% url loads %}');
+					$('interface-content').load('{% url 'loads' frame.uuid %}');
 					$('interface-content').setStyle('display', 'block');
 				}
 				
@@ -54,8 +56,8 @@
 	</script>
 </head>
 <body>
-	<embed src="{% url svg %}" type="image/svg+xml" />
-	<!--<object id="plot" data="{% url svg %}" type="image/svg+xml"></object>-->
+	<embed src="{% url 'svg' %}" type="image/svg+xml" />
+	<!--<object id="plot" data="{% url 'svg' %}" type="image/svg+xml"></object>-->
 	
 	<div id="menu">
 		<ul>

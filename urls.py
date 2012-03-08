@@ -11,12 +11,11 @@ urlpatterns = patterns('',
     # Main template
     url(r'^$', direct_to_template, {'template': 'home.html'}, name='home'),
     url(r'^new/$', 'frame.structure.views.new_frame', name='new_frame'),
-    url(r'^frame/(?P<uuid>[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/$', direct_to_template, {'template': 'base.html'}, name='frame'),
+    url(r'^frame/(?P<uuid>[a-zA-Z0-9]{6})/$', 'frame.structure.views.frame', name='frame'),
     
     # Interface
-    url(r'^members/$', 'structure.views.members', name='members'),
-    url(r'^supports/$', direct_to_template, {'template': 'supports.html'}, name='supports'),
-    url(r'^loads/$', direct_to_template, {'template': 'loads.html'}, name='loads'),
+    url(r'^frame/(?P<uuid>[a-zA-Z0-9]{6})/members/$', 'structure.views.members', name='members'),
+    url(r'^frame/(?P<uuid>[a-zA-Z0-9]{6})/loads/$', direct_to_template, {'template': 'loads.html'}, name='loads'),
     
     # Graphs and rendering
     url(r'^svg/$', 'structure.views.svg', name='svg'),

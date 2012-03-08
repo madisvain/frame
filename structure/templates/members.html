@@ -1,0 +1,74 @@
+<script type="text/javascript">
+	window.addEvent('domready',function() {
+		$('add_member').addEvent('click', function() {
+			$('empty_member').clone().inject('members', 'bottom').addClass('member').removeClass('hidden');
+			
+			// Reindex forms
+			$$('.member').each(function(element) {
+				
+			});
+		});
+	});
+</script>
+
+<form method="post" action="{% url 'members' %}">
+    {{ formset.management_form }}
+	<table>
+		<thead>
+			<tr>
+				<th colspan="3">Beginning</th>
+				<th colspan="3">Ending</th>
+				<th rowspan="2"></th>
+			</tr>
+			<tr>
+				<th>X</th>
+				<th>Y</th>
+				<th>Constraints</th>
+				<th>X</th>
+				<th>Y</th>
+				<th>Constraints</th>
+			</tr>
+		</thead>
+		<tbody id="members">
+			<tr id="empty_member" class="hidden">
+				<td class="center">{{ formset.empty_form.x }}</td>
+				<td class="center">{{ formset.empty_form.y }}</td>
+				<td>
+					x: {{ formset.empty_form.constraint_x }}
+					y: {{ formset.empty_form.constraint_y }}
+					r: {{ formset.empty_form.constraint_rotation }}
+				</td>
+				<td class="center">{{ formset.empty_form.x }}</td>
+				<td class="center">{{ formset.empty_form.y }}</td>
+				<td>
+					x: {{ formset.empty_form.constraint_x }}
+					y: {{ formset.empty_form.constraint_y }}
+					r: {{ formset.empty_form.constraint_rotation }}
+				</td>
+				<td class="center">
+					<img src="/static/img/remove.png" alt="" />
+				</td>
+			</tr>
+			{% for form in formset %}
+				{% cycle '<tr class="member">' '' %}
+					<td class="center">{{ form.x }}</td>
+					<td class="center">{{ form.y }}</td>
+					<td>
+						x: {{ form.constraint_x }}
+						y: {{ form.constraint_y }}
+						r: {{ form.constraint_rotation }}
+					</td>
+					{% if forloop.counter|divisibleby:'2' %}
+						<td class="center">
+							<img src="/static/img/remove.png" alt="" />
+						</td>
+					{% endif %}
+				{% cycle '' '</tr>' %}
+			{% endfor %}
+		</tbody>
+	</table>
+</form>
+
+<br/><br/>
+<a href="#" id="save" class="g-button green fr" style="margin-left: 15px;"><i class="icon-ok icon-white"></i> Save</a>
+<a href="#" id="add_member" class="g-button blue fr"><i class="icon-plus icon-white"></i> Add member</a>
