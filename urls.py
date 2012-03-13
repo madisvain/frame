@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^frame/(?P<uuid>[a-zA-Z0-9]{6})/$', 'frame.structure.views.frame', name='frame'),
     
     # Interface
-    url(r'^frame/(?P<uuid>[a-zA-Z0-9]{6})/members/$', 'structure.views.members', name='members'),
+    url(r'^frame/(?P<uuid>[a-zA-Z0-9]{6})/members/$', 'frame.structure.views.members', name='members'),
     url(r'^frame/(?P<uuid>[a-zA-Z0-9]{6})/loads/$', direct_to_template, {'template': 'loads.html'}, name='loads'),
     
     # Graphs and rendering

@@ -34,6 +34,12 @@ def members(request, uuid):
     NodeFormSet = inlineformset_factory(Frame, Node, extra=2)
     node_formset = NodeFormSet(instance=frame)
     
+    if request.POST and formset.is_valid():
+        nodes = formset.save(commit=False)
+        for node in nodes:
+            # Save elements here!
+            node.save()
+    
     return render(request, 'members.html', {
         'frame': frame,
         'formset': node_formset,

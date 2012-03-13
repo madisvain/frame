@@ -1,3 +1,5 @@
+{% load url from future %}
+
 <script type="text/javascript">
 	window.addEvent('domready',function() {
 		$('add_member').addEvent('click', function() {
@@ -11,7 +13,7 @@
 	});
 </script>
 
-<form method="post" action="{% url 'members' %}">
+<form method="post" action="{% url 'members' frame.uuid %}">
     {{ formset.management_form }}
 	<table>
 		<thead>
@@ -34,16 +36,16 @@
 				<td class="center">{{ formset.empty_form.x }}</td>
 				<td class="center">{{ formset.empty_form.y }}</td>
 				<td>
-					x: {{ formset.empty_form.constraint_x }}
-					y: {{ formset.empty_form.constraint_y }}
-					r: {{ formset.empty_form.constraint_rotation }}
+					Axial {{ formset.empty_form.constraint_x }}
+					Shear {{ formset.empty_form.constraint_y }}
+					Bending {{ formset.empty_form.constraint_rotation }}
 				</td>
 				<td class="center">{{ formset.empty_form.x }}</td>
 				<td class="center">{{ formset.empty_form.y }}</td>
 				<td>
-					x: {{ formset.empty_form.constraint_x }}
-					y: {{ formset.empty_form.constraint_y }}
-					r: {{ formset.empty_form.constraint_rotation }}
+					Axial {{ formset.empty_form.constraint_x }}
+					Shear {{ formset.empty_form.constraint_y }}
+					Bending {{ formset.empty_form.constraint_rotation }}
 				</td>
 				<td class="center">
 					<img src="/static/img/remove.png" alt="" />
@@ -54,9 +56,9 @@
 					<td class="center">{{ form.x }}</td>
 					<td class="center">{{ form.y }}</td>
 					<td>
-						x: {{ form.constraint_x }}
-						y: {{ form.constraint_y }}
-						r: {{ form.constraint_rotation }}
+						Axial {{ form.constraint_x }}
+						Shear {{ form.constraint_y }}
+						Bending {{ form.constraint_rotation }}
 					</td>
 					{% if forloop.counter|divisibleby:'2' %}
 						<td class="center">
