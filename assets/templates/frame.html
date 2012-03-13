@@ -12,6 +12,11 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.1/mootools-yui-compressed.js"></script>
 	<script type="text/javascript">
 		window.addEvent('domready', function() {
+			var img = new Element('img', {
+				id: 'frame',
+				src : '{% url 'plot' frame.uuid 'agg' %}'
+			}).inject($(document.body))
+			
 			// Menu showing and hiding
 			$('menu-hide').addEvent('click', function(e) {
 				e.stop();
@@ -49,6 +54,11 @@
 				interface.setStyle('display', 'block');
 			});
 			$('interface-hide').addEvent('click', function() {
+				img = new Element('img', {
+					id: 'frame',
+					src : '{% url 'plot' frame.uuid 'agg' %}'
+				})
+				
 				$('interface').setStyle('display', 'none');
 				$('interface-content').setStyle('display', 'none');
 			});
@@ -56,8 +66,8 @@
 	</script>
 </head>
 <body>
-	<embed src="{% url 'svg' %}" type="image/svg+xml" />
-	<!--<object id="plot" data="{% url 'svg' %}" type="image/svg+xml"></object>-->
+	<!--<embed id="frame" src="{% url 'plot' frame.uuid 'svg' %}" type="image/svg+xml" style="width: 100%; height:100%;" />-->
+	<!--<object id="plot" data="{% url 'plot' frame.uuid 'svg' %}" type="image/svg+xml"></object>-->
 	
 	<div id="menu">
 		<ul>

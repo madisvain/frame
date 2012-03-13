@@ -45,14 +45,24 @@ def members(request, uuid):
         'formset': node_formset,
     })
 
-def loads(request, uuid=None):
+def loads(request, uuid):
+    frame = get_object_or_404(Frame, uuid=uuid)
+    
     return render(request, 'loads.html')
 
-def svg(request, uuid=None, width=None, height=None):
+def svg(request, uuid, format='svg'):
+    frame = get_object_or_404(Frame, uuid=uuid)
+    
+    # Rendering format
+    if format.lower() == 'agg':
+        mimetype = 'image/png'
+    else:
+        mimetype = 'image/svg+xml'
+    
     import cStringIO
     import numpy as np
     import matplotlib
-    matplotlib.use('Svg')
+    matplotlib.use(format)
     matplotlib.rcParams['axes.linewidth'] = 0.5
     import matplotlib.pyplot as plt
     
@@ -72,8 +82,8 @@ def svg(request, uuid=None, width=None, height=None):
     ax.axis(np.asarray(ax.axis()) + [-1,1,-1,1])
     
     imgdata = cStringIO.StringIO()
-    fig.set_size_inches(12,8)
+    fig.set_size_inches(24,13.5)
     fig.savefig(imgdata, transparent=False)
     
-    return HttpResponse(imgdata.getvalue(), mimetype='image/svg+xml')
+    return HttpResponse(imgdata.getvalue(), mimetype=mimetype)
     imgdata.close()
