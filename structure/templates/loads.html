@@ -1,1 +1,138 @@
-Loads
+{% load url from future %}
+
+<script type="text/javascript">
+	window.addEvent('domready',function() {
+		// Add new nodes
+		$('add_load').addEvent('click', function(e) {
+			e.stop();
+			$('empty_load').clone(true, true).inject('loads', 'bottom').addClass('load').removeClass('hidden');
+			
+			// Re-index formset
+			$$('.load').each(function(element, index) {
+				element.getElements('[id^=id_load_set]').each(function(e, i) {
+					var id = e.getProperty('id').replace(/\d+/, index).replace(/__prefix__/, index);
+					var name = e.getProperty('name').replace(/\d+/, index).replace(/__prefix__/, index);
+                    e.setProperties({
+                        'id': id,
+                        'name': name
+                    });
+				});
+			});
+
+            // Update -TOTAL_FORMS
+            $('id_loads-TOTAL_FORMS').setProperty('value', $$('.load').length)
+			
+		});
+		
+		// Add new elements
+		$('add_distributed').addEvent('click', function(e) {
+			e.stop();
+			$('empty_distributed').clone(true, true).inject('distributeds', 'bottom').addClass('distributed').removeClass('hidden');
+			
+			// Re-index formset
+			$$('.distributed').each(function(element, index) {
+				element.getElements('[id^=id_distributed_set]').each(function(e, i) {
+					var id = e.getProperty('id').replace(/\d+/, index).replace(/__prefix__/, index);
+					var name = e.getProperty('name').replace(/\d+/, index).replace(/__prefix__/, index);
+                    e.setProperties({
+                        'id': id,
+                        'name': name
+                    });
+				});
+			});
+
+            // Update -TOTAL_FORMS
+            $('id_distributeds-TOTAL_FORMS').setProperty('value', $$('.distributed').length)
+			
+		});
+		
+        
+		// Set send
+		$('forms').set('send', {
+            onComplete: function() {
+		        $('interface-content').load('{% url 'loads' frame.uuid %}');
+            }
+		});
+		// Save elements
+		$$('.save_forms').addEvent('click', function(e) {
+			e.stop();
+			$('forms').send();
+		});
+	});
+</script>
+
+<form id="forms" method="post" action="{% url 'loads' frame.uuid %}">{% csrf_token %}
+    {{ load_formset.management_form }}
+    {{ distributed_formset.management_form }}
+    <div class="half first">
+		<h3>Consentrated loads</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Element</th>
+					<th>Cordinate</th>
+					<th>Load</th>
+					<th><img src="/static/img/remove.png" alt="" /></th>
+				</tr>
+			</thead>
+			<tbody id="loads">
+				<tr id="empty_load" class="hidden">
+					<td class="center">{{ load_formset.empty_form.element }}</td>
+					<td class="center">{{ load_formset.empty_form.x }}</td>
+					<td class="center">{{ load_formset.empty_form.load }}</td>
+					<td class="center">
+						{{ node_formset.empty_form.DELETE }}
+					</td>
+				</tr>
+				{% for form in load_formset %}
+					<tr class="load">
+						<td class="center">{{ form.element }}</td>
+						<td class="center">{{ form.x }}</td>
+						<td>{{ form.load }}</td>
+						<td class="center">
+							{{ form.id }}
+							{{ form.DELETE }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<br/><br/>
+		<a href="#" class="g-button green fr save_forms" style="margin-left: 15px;"><i class="icon-ok icon-white"></i> Save loads</a>
+		<a href="#" id="add_load" class="g-button blue fr"><i class="icon-plus icon-white"></i> Add load</a>
+	</div>
+	<div class="half">
+		<h3>Distributed loads</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Element</th>
+					<th>Load</th>
+					<th><img src="/static/img/remove.png" alt="" /></th>
+				</tr>
+			</thead>
+			<tbody id="distributeds">
+				<tr id="empty_distributed" class="hidden">
+					<td class="center">{{ distributed_formset.empty_form.element }}</td>
+					<td class="center">{{ distributed_formset.empty_form.load }}</td>
+					<td class="center">
+						{{ element_formset.empty_form.DELETE }}
+					</td>
+				</tr>
+				{% for form in distributed_formset %}
+					<tr class="distributed">
+						<td class="center">{{ form.element }}</td>
+						<td class="center">{{ form.load }}</td>
+						<td class="center">
+							{{ form.id }}
+							{{ form.DELETE }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<br/><br/>
+		<a href="#" class="g-button green fr save_forms" style="margin-left: 15px;"><i class="icon-ok icon-white"></i> Save distributeds</a>
+		<a href="#" id="add_distributed" class="g-button blue fr"><i class="icon-plus icon-white"></i> Add distributed</a>
+    </div>
+</form>

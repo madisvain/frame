@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms.models import inlineformset_factory
 
-from frame.structure.models import Frame, Node, Element
+from frame.structure.models import Frame, Node, Element, Load, Distributed
 from frame.structure.forms import FrameForm
 
 def home(request):
@@ -53,7 +53,19 @@ def members(request, uuid):
 def loads(request, uuid):
     frame = get_object_or_404(Frame, uuid=uuid)
     
-    return render(request, 'loads.html')
+    # Node formset
+    LoadFormSet = inlineformset_factory(Frame, Load, extra=1)
+    load_formset = LoadFormSet(request.POST or None, instance=frame, prefix='loads')
+    
+    # Distributed formset
+    DistributedFormSet = inlineformset_factory(Frame, Distributed, extra=1)
+    distributed_formset = DistributedFormSet(request.POST or None, instance=frame, prefix='distributeds')
+    
+    return render(request, 'loads.html', {
+        'frame': frame,
+        'load_formset': load_formset,
+        'distributed_formset': distributed_formset
+    })
 
 def svg(request, uuid, format='svg'):
     frame = get_object_or_404(Frame, uuid=uuid)
@@ -80,10 +92,6 @@ def svg(request, uuid, format='svg'):
     
     for element in elements:
         ax.plot([element.start_node.x, element.end_node.x], [element.start_node.y, element.end_node.y], 'ko-', color='black', ms=8, lw=1.5, alpha=0.7, mfc='orange')
-    
-    #ax.plot([0,0], [0,10], 'ko-', color='black', ms=8, lw=1.5, alpha=0.7, mfc='orange')
-    #ax.plot([0,10], [10,6], 'ko-', ms=8, lw=1.5, alpha=0.7, mfc='orange')
-    #ax.plot([10,10], [6,0], 'ko-', ms=8, lw=1.5, alpha=0.7, mfc='orange')
     ax.grid(True)
     ax.axis('equal')
     #ax.axis('scaled')

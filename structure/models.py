@@ -3,6 +3,7 @@
 from django.db import models
 from frame.structure.utils import get_random_string
 
+
 class Frame(models.Model):
     uuid = models.CharField(u'uuid', max_length=6)
     name = models.CharField(u'name', max_length=255)
@@ -20,6 +21,7 @@ class Frame(models.Model):
             self.uuid = get_random_string(length=6)
         super(Frame, self).save()
 
+
 class Node(models.Model):
     frame = models.ForeignKey(Frame)
     x = models.DecimalField('X-cordinate', max_digits=6, decimal_places=3)
@@ -31,11 +33,12 @@ class Node(models.Model):
     def __unicode__(self):
         return '%d, %d' % (self.x, self.y)
 
+
 class Element(models.Model):
     frame = models.ForeignKey(Frame)
     start_node = models.ForeignKey(Node, related_name='start')
     end_node = models.ForeignKey(Node, related_name='end')
-    length = models.DecimalField('length', max_digits=6, decimal_places=5, blank=True)
+    length = models.DecimalField('length', max_digits=6, decimal_places=3, blank=True)
     cosa = models.DecimalField('length', max_digits=6, decimal_places=5, blank=True)
     cosb = models.DecimalField('length', max_digits=6, decimal_places=5, blank=True)
 
@@ -43,10 +46,33 @@ class Element(models.Model):
         return '%s - %s' % (self.start_node, self.end_node)
 
     def save(self):
-        # Element length
         import numpy as np
-        self.length = np.sqrt(np.square(self.end_node.y - self.start_node.y) + np.square(self.end_node.x - self.start_node.x))
+        from decimal import Decimal
+        
+        # Element length
+        self.length = np.sqrt(np.square(self.end_node.y - self.start_node.y) + np.square(self.end_node.x - self.start_node.x)).quantize(Decimal('.001'))
         
         # Element cosins
+        self.cosa = ((self.end_node.x - self.start_node.x) / self.length).quantize(Decimal('.00001'))
+        self.cosb = ((self.end_node.y - self.start_node.y) / self.length).quantize(Decimal('.00001'))
         
         super(Element, self).save()
+
+
+class Load(models.Model):
+    frame = models.ForeignKey(Frame)
+    element = models.ForeignKey(Element)
+    x = models.DecimalField('X-cordinate', max_digits=6, decimal_places=3)
+    load = models.DecimalField('X-cordinate', max_digits=6, decimal_places=2)
+    
+    def __unicode__(self):
+        return '%s - %s' % (self.element, self.load)
+
+class Distributed(models.Model):
+    frame = models.ForeignKey(Frame)
+    element = models.ForeignKey(Element)
+    #x = models.DecimalField('X-cordinate', max_digits=6, decimal_places=3)
+    load = models.DecimalField('X-cordinate', max_digits=6, decimal_places=2)
+    
+    def __unicode__(self):
+        return '%s - %s' % (self.element, self.load)
