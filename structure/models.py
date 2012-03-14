@@ -35,6 +35,18 @@ class Element(models.Model):
     frame = models.ForeignKey(Frame)
     start_node = models.ForeignKey(Node, related_name='start')
     end_node = models.ForeignKey(Node, related_name='end')
+    length = models.DecimalField('length', max_digits=6, decimal_places=5, blank=True)
+    cosa = models.DecimalField('length', max_digits=6, decimal_places=5, blank=True)
+    cosb = models.DecimalField('length', max_digits=6, decimal_places=5, blank=True)
 
     def __unicode__(self):
         return '%s - %s' % (self.start_node, self.end_node)
+
+    def save(self):
+        # Element length
+        import numpy as np
+        self.length = np.sqrt(np.square(self.end_node.y - self.start_node.y) + np.square(self.end_node.x - self.start_node.x))
+        
+        # Element cosins
+        
+        super(Element, self).save()
