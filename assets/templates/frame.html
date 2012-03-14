@@ -38,7 +38,7 @@
 				
 				// Members and joints
 				if (this.getProperty('class') == 'membersandjoints') {
-					interface.getElement('h2').set('text', 'Members & Joints');
+					interface.getElement('h2').set('text', 'Elements & Constraints');
 					$('interface-content').load('{% url 'members' frame.uuid %}');
 					$('interface-content').setStyle('display', 'block');
 				}
@@ -81,10 +81,10 @@
 			</li>
 			<li class="membersandjoints">
 				<h3>
-					<a href="#" class="interface">Members & Supports<br/>
+					<a href="#" class="interface">Elements & Constraints<br/>
 						<small>
-							4 joints<br/>
-							3 supports
+							{{ frame.nodes }} nodes<br/>
+							{{ frame.elements }} elements
 						</small>
 					</a>
 				</h3>

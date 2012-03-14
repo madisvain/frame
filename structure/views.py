@@ -31,18 +31,23 @@ def members(request, uuid):
     frame = get_object_or_404(Frame, uuid=uuid)
     
     # Node formset
-    NodeFormSet = inlineformset_factory(Frame, Node, extra=2)
-    node_formset = NodeFormSet(instance=frame)
+    NodeFormSet = inlineformset_factory(Frame, Node, extra=1)
+    node_formset = NodeFormSet(request.POST or None, instance=frame, prefix='nodes')
     
-    if request.POST and formset.is_valid():
-        nodes = formset.save(commit=False)
-        for node in nodes:
-            # Save elements here!
-            node.save()
+    # Element formset
+    ElementFormSet = inlineformset_factory(Frame, Element, extra=1)
+    element_formset = ElementFormSet(request.POST or None, instance=frame, prefix='elements')
+    
+    if request.POST:
+        if node_formset.is_valid():
+            node_formset.save()
+        if element_formset.is_valid():
+            element_formset.save()
     
     return render(request, 'members.html', {
         'frame': frame,
-        'formset': node_formset,
+        'node_formset': node_formset,
+        'element_formset': element_formset
     })
 
 def loads(request, uuid):
@@ -70,9 +75,15 @@ def svg(request, uuid, format='svg'):
     
     ax = fig.add_subplot(111)
     #ax.plot(10 * np.random.rand(50), '-o', ms=8, lw=1, alpha=0.7, mfc='orange')
-    ax.plot([0,0], [0,10], 'ko-', color='black', ms=8, lw=1.5, alpha=0.7, mfc='orange')
-    ax.plot([0,10], [10,6], 'ko-', ms=8, lw=1.5, alpha=0.7, mfc='orange')
-    ax.plot([10,10], [6,0], 'ko-', ms=8, lw=1.5, alpha=0.7, mfc='orange')
+    # Draw elements
+    elements = Element.objects.filter(frame=frame)
+    
+    for element in elements:
+        ax.plot([element.start_node.x, element.end_node.x], [element.start_node.y, element.end_node.y], 'ko-', color='black', ms=8, lw=1.5, alpha=0.7, mfc='orange')
+    
+    #ax.plot([0,0], [0,10], 'ko-', color='black', ms=8, lw=1.5, alpha=0.7, mfc='orange')
+    #ax.plot([0,10], [10,6], 'ko-', ms=8, lw=1.5, alpha=0.7, mfc='orange')
+    #ax.plot([10,10], [6,0], 'ko-', ms=8, lw=1.5, alpha=0.7, mfc='orange')
     ax.grid(True)
     ax.axis('equal')
     #ax.axis('scaled')

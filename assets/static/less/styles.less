@@ -130,6 +130,7 @@ html {
 	}
 	#interface-content {
 		height: auto;
+		overflow: auto;
 		padding: 20px;
 		position: absolute;
 		top: 50px;
@@ -137,6 +138,18 @@ html {
 		bottom: 0;
 		left: 0;
 		
+		
+		.half {
+			margin-left: 4.4%;
+			float: left;
+			min-height: 1px;
+			position: relative;
+			padding: 0;
+			width: 47.8% !important;
+			&.first {
+				margin-left: 0;
+			}
+		 }
 		
 		/*
 		Pretty Table Styling
@@ -167,8 +180,11 @@ html {
 				border-top: 1px solid #e0e0e0;
 				border-right: 1px solid #e0e0e0;
 			}
-			td input {
+			td input[type='text'] {
 				width: 100%;
+			}
+			td input[type='checkbox'] {
+				width: none;
 			}
 			tr.odd-row td { background:#f6f6f6; }
 			

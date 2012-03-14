@@ -2,75 +2,145 @@
 
 <script type="text/javascript">
 	window.addEvent('domready',function() {
-		$('add_member').addEvent('click', function() {
-			$('empty_member').clone().inject('members', 'bottom').addClass('member').removeClass('hidden');
+		// Add new nodes
+		$('add_node').addEvent('click', function(e) {
+			e.stop();
+			$('empty_node').clone(true, true).inject('nodes', 'bottom').addClass('node').removeClass('hidden');
 			
-			// Reindex forms
-			$$('.member').each(function(element) {
-				
+			// Re-index formset
+			$$('.node').each(function(element, index) {
+				element.getElements('[id^=id_node_set]').each(function(e, i) {
+					var id = e.getProperty('id').replace(/\d+/, index).replace(/__prefix__/, index);
+					var name = e.getProperty('name').replace(/\d+/, index).replace(/__prefix__/, index);
+                    e.setProperties({
+                        'id': id,
+                        'name': name
+                    });
+				});
 			});
+
+            // Update -TOTAL_FORMS
+            $('id_nodes-TOTAL_FORMS').setProperty('value', $$('.node').length)
+			
+		});
+		
+		// Add new elements
+		$('add_element').addEvent('click', function(e) {
+			e.stop();
+			$('empty_element').clone(true, true).inject('elements', 'bottom').addClass('element').removeClass('hidden');
+			
+			// Re-index formset
+			$$('.element').each(function(element, index) {
+				element.getElements('[id^=id_element_set]').each(function(e, i) {
+					var id = e.getProperty('id').replace(/\d+/, index).replace(/__prefix__/, index);
+					var name = e.getProperty('name').replace(/\d+/, index).replace(/__prefix__/, index);
+                    e.setProperties({
+                        'id': id,
+                        'name': name
+                    });
+				});
+			});
+
+            // Update -TOTAL_FORMS
+            $('id_elements-TOTAL_FORMS').setProperty('value', $$('.element').length)
+			
+		});
+		
+        
+		// Set send
+		$('forms').set('send', {
+            onComplete: function() {
+		        $('interface-content').load('{% url 'members' frame.uuid %}');
+            }
+		});
+		// Save elements
+		$$('.save_forms').addEvent('click', function(e) {
+			e.stop();
+			$('forms').send();
 		});
 	});
 </script>
 
-<form method="post" action="{% url 'members' frame.uuid %}">
-    {{ formset.management_form }}
-	<table>
-		<thead>
-			<tr>
-				<th colspan="3">Beginning</th>
-				<th colspan="3">Ending</th>
-				<th rowspan="2"></th>
-			</tr>
-			<tr>
-				<th>X</th>
-				<th>Y</th>
-				<th>Constraints</th>
-				<th>X</th>
-				<th>Y</th>
-				<th>Constraints</th>
-			</tr>
-		</thead>
-		<tbody id="members">
-			<tr id="empty_member" class="hidden">
-				<td class="center">{{ formset.empty_form.x }}</td>
-				<td class="center">{{ formset.empty_form.y }}</td>
-				<td>
-					Axial {{ formset.empty_form.constraint_x }}
-					Shear {{ formset.empty_form.constraint_y }}
-					Bending {{ formset.empty_form.constraint_rotation }}
-				</td>
-				<td class="center">{{ formset.empty_form.x }}</td>
-				<td class="center">{{ formset.empty_form.y }}</td>
-				<td>
-					Axial {{ formset.empty_form.constraint_x }}
-					Shear {{ formset.empty_form.constraint_y }}
-					Bending {{ formset.empty_form.constraint_rotation }}
-				</td>
-				<td class="center">
-					<img src="/static/img/remove.png" alt="" />
-				</td>
-			</tr>
-			{% for form in formset %}
-				{% cycle '<tr class="member">' '' %}
-					<td class="center">{{ form.x }}</td>
-					<td class="center">{{ form.y }}</td>
-					<td>
-						Axial {{ form.constraint_x }}
-						Shear {{ form.constraint_y }}
-						Bending {{ form.constraint_rotation }}
+<form id="forms" method="post" action="{% url 'members' frame.uuid %}">{% csrf_token %}
+    {{ node_formset.management_form }}
+    {{ element_formset.management_form }}
+    <div class="half first">
+		<h3>Nodes</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>X</th>
+					<th>Y</th>
+					<th>Constraints</th>
+					<th><img src="/static/img/remove.png" alt="" /></th>
+				</tr>
+			</thead>
+			<tbody id="nodes">
+				<tr id="empty_node" class="hidden">
+					<td class="center">{{ node_formset.empty_form.x }}</td>
+					<td class="center">{{ node_formset.empty_form.y }}</td>
+					<td nowrap>
+						x: {{ node_formset.empty_form.constraint_x }}
+						y: {{ node_formset.empty_form.constraint_y }}
+						r: {{ node_formset.empty_form.constraint_rotation }}
 					</td>
-					{% if forloop.counter|divisibleby:'2' %}
-						<td class="center">
-							<img src="/static/img/remove.png" alt="" />
+					<td class="center">
+						{{ node_formset.empty_form.DELETE }}
+					</td>
+				</tr>
+				{% for form in node_formset %}
+					<tr class="node">
+						<td class="center">{{ form.x }}</td>
+						<td class="center">{{ form.y }}</td>
+						<td nowrap>
+							x: {{ form.constraint_x }}
+							y: {{ form.constraint_y }}
+							r: {{ form.constraint_rotation }}
 						</td>
-					{% endif %}
-				{% cycle '' '</tr>' %}
-			{% endfor %}
-		</tbody>
-	</table>
+						<td class="center">
+							{{ form.id }}
+							{{ form.DELETE }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<br/><br/>
+		<a href="#" class="g-button green fr save_forms" style="margin-left: 15px;"><i class="icon-ok icon-white"></i> Save nodes</a>
+		<a href="#" id="add_node" class="g-button blue fr"><i class="icon-plus icon-white"></i> Add node</a>
+	</div>
+	<div class="half">
+		<h3>Elements</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Begginning node</th>
+					<th>Ending node</th>
+					<th><img src="/static/img/remove.png" alt="" /></th>
+				</tr>
+			</thead>
+			<tbody id="elements">
+				<tr id="empty_element" class="hidden">
+					<td class="center">{{ element_formset.empty_form.start_node }}</td>
+					<td class="center">{{ element_formset.empty_form.end_node }}</td>
+					<td class="center">
+						{{ element_formset.empty_form.DELETE }}
+					</td>
+				</tr>
+				{% for form in element_formset %}
+					<tr class="element">
+						<td class="center">{{ form.start_node }}</td>
+						<td class="center">{{ form.end_node }}</td>
+						<td class="center">
+							{{ form.id }}
+							{{ form.DELETE }}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<br/><br/>
+		<a href="#" class="g-button green fr save_forms" style="margin-left: 15px;"><i class="icon-ok icon-white"></i> Save element</a>
+		<a href="#" id="add_element" class="g-button blue fr"><i class="icon-plus icon-white"></i> Add element</a>
+    </div>
 </form>
-
-<br/><br/>
-<a href="#" id="save" class="g-button green fr" style="margin-left: 15px;"><i class="icon-ok icon-white"></i> Save</a>
-<a href="#" id="add_member" class="g-button blue fr"><i class="icon-plus icon-white"></i> Add member</a>
