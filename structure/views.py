@@ -7,7 +7,7 @@ from django.forms.models import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 
 from frame.structure.models import Frame, Node, Element, Load, Distributed
-from frame.structure.forms import ElementForm
+from frame.structure.forms import NodeForm, ElementForm
 
 def home(request):
     return render(request, 'home.html')
@@ -30,27 +30,34 @@ def frame(request, uuid):
         'frame': frame
     })
 
-def members(request, uuid):
+def nodes(request, uuid):
     frame = get_object_or_404(Frame, uuid=uuid)
     
     # Node formset
-    NodeFormSet = inlineformset_factory(Frame, Node, extra=1)
+    NodeFormSet = inlineformset_factory(Frame, Node, extra=1, form=NodeForm)
     node_formset = NodeFormSet(request.POST or None, instance=frame, prefix='nodes')
+    
+    if request.POST and node_formset.is_valid():
+        node_formset.save()
+    
+    return render(request, 'nodes.html', {
+        'frame': frame,
+        'node_formset': node_formset
+    })
+
+def elements(request, uuid):
+    frame = get_object_or_404(Frame, uuid=uuid)
     
     # Element formset
     ElementFormSet = inlineformset_factory(Frame, Element, extra=1, form=ElementForm)
     ElementFormSet.form = staticmethod(curry(ElementForm, frame=frame))
     element_formset = ElementFormSet(request.POST or None, instance=frame, prefix='elements')
     
-    if request.POST:
-        if node_formset.is_valid():
-            node_formset.save()
-        if element_formset.is_valid():
-            element_formset.save()
+    if request.POST and element_formset.is_valid():
+        element_formset.save()
     
-    return render(request, 'members.html', {
+    return render(request, 'elements.html', {
         'frame': frame,
-        'node_formset': node_formset,
         'element_formset': element_formset
     })
 

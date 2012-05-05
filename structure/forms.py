@@ -23,4 +23,8 @@ class ElementForm(ModelForm):
 class NodeForm(ModelForm):
     class Meta:
         model = Node
-
+    
+    def __init__(self, *args, **kwargs):
+        super(NodeForm, self ).__init__(*args, **kwargs)
+        self.fields['x'].widget.attrs['style'] = 'width: 40px;'
+        self.fields['y'].widget.attrs['style'] = 'width: 40px;'

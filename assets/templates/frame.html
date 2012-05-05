@@ -2,7 +2,28 @@
 {% load url from future %}
 
 {% block extrahead %}
-	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// Load frame image
+			$('<img />', {
+			    id: 'frame',
+			    src: '{% url 'plot' frame.uuid 'agg' %}'
+			}).appendTo('#content');
+			
+			
+			// Ajax modal
+			$('[data-toggle="modal"]').click(function(e) {
+				e.preventDefault();
+				$.get($(this).children('a:first').attr('href'), function(data) {
+					$('#popup').html(data)
+					$('#popup').modal()
+					//$('<div class="modal hide">' + data + '</div>').appendTo('body').modal();
+				}).success(function() {
+					$('input:text:visible:first').focus();
+				});
+			});
+		});
+	</script>
 
 	<!--<script type="text/javascript">
 		window.addEvent('domready', function() {
@@ -33,7 +54,7 @@
 				// Members and joints
 				if (this.getProperty('class') == 'membersandjoints') {
 					interface.getElement('h2').set('text', 'Elements & Constraints');
-					$('interface-content').load('{% url 'members' frame.uuid %}');
+					$('interface-content').load('{# url 'members' frame.uuid #}');
 					$('interface-content').setStyle('display', 'block');
 				}
 				
@@ -63,13 +84,34 @@
 {% block sidebar %}
 	<ul class="nav nav-list">
 		<li class="nav-header">Elements & Constraints</li>
-		<li><a href="#">Nodes<span class="badge" style="float: right;">{{ frame.nodes }}</span></a></li>
-		<li><a href="#">Elements<span class="badge" style="float: right;">{{ frame.elements }}</span></a></li>
-	  	<li class="divider"></li>
+		<li data-toggle="modal">
+			<a href="{% url 'nodes' frame.uuid %}">
+				Nodes<span class="badge" style="float: right;">{{ frame.nodes }}</span>
+			</a>
+		</li>
+		<li data-toggle="modal">
+			<a href="{% url 'elements' frame.uuid %}">
+				Elements<span class="badge" style="float: right;">{{ frame.elements }}</span>
+			</a>
+		</li>
+		
 		<li class="nav-header">Loads</li>
 		<li><a href="#">Concentrated<span class="badge" style="float: right;">{{ frame.elements }}</span></a></li>
 		<li><a href="#">Distributed<span class="badge" style="float: right;">{{ frame.elements }}</span></a></li>
 		<li><a href="#">Moments<span class="badge" style="float: right;">{{ frame.elements }}</span></a></li>
+		
+		<li class="divider"></li>
+		
+		<li class="nav-header">Results</li>
+		<li><a href="#">Tension & Compression</a></li>
+		<li><a href="#">Shear forces</a></li>
+		<li><a href="#">Bending moments</a></li>
+		<li><a href="#">Displacements</a></li>
+		
+		<li class="divider"></li>
+		<li class="nav-header">Documentation</li>
+		<li><a href="#">Thesis</a></li>
+		<li><a href="#">Help</a></li>
 	</ul>
 {% endblock %}
 
@@ -77,4 +119,6 @@
 {% block content %}
 	<!--<embed id="frame" src="{% url 'plot' frame.uuid 'svg' %}" type="image/svg+xml" style="width: 100%; height:100%;" />-->
 	<!--<object id="plot" data="{% url 'plot' frame.uuid 'svg' %}" type="image/svg+xml"></object>-->
+	
+	<div id="popup" class="modal hide"></div>
 {% endblock %}
