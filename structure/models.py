@@ -6,7 +6,7 @@ from frame.structure.utils import get_random_string
 
 class Frame(models.Model):
     uuid = models.CharField(u'uuid', max_length=6)
-    name = models.CharField(u'name', max_length=255)
+    #name = models.CharField(u'name', max_length=255)
     created_at = models.DateField(u'created', auto_now_add=True)
     updated_at = models.DateField(u'updated', auto_now=True)
     
@@ -16,10 +16,10 @@ class Frame(models.Model):
     def elements(self):
         return Element.objects.filter(frame=self).count()
     
-    def save(self):
-        if not self.uuid:
-            self.uuid = get_random_string(length=6)
-        super(Frame, self).save()
+    #def save(self):
+    #    if not self.uuid:
+    #        self.uuid = get_random_string(length=6)
+    #    super(Frame, self).save()
 
 
 class Node(models.Model):

@@ -1,24 +1,27 @@
 #coding: utf-8
 
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.functional import curry
+from frame.structure.utils import get_random_string
 from django.forms.models import inlineformset_factory
+from django.shortcuts import render, redirect, get_object_or_404
 
 from frame.structure.models import Frame, Node, Element, Load, Distributed
-from frame.structure.forms import FrameForm
+from frame.structure.forms import ElementForm
 
 def home(request):
     return render(request, 'home.html')
 
 def new_frame(request):
-    form = FrameForm(request.POST or None)
-    if request.POST and form.is_valid():
-        frame = form.save()
-        return redirect('frame', uuid=frame.uuid)
-        
-    return render(request, 'new.html', {
-        'form': form
-    })
+    frame = Frame.objects.create(uuid=get_random_string(length=6))
+    return redirect('frame', uuid=frame.uuid)
+    #form = FrameForm(request.POST or None)
+    #if request.POST and form.is_valid():
+    #    frame = form.save()
+    #    return redirect('frame', uuid=frame.uuid)    
+    #return render(request, 'new.html', {
+    #    'form': form
+    #})
 
 def frame(request, uuid):
     frame = get_object_or_404(Frame, uuid=uuid)
@@ -35,7 +38,8 @@ def members(request, uuid):
     node_formset = NodeFormSet(request.POST or None, instance=frame, prefix='nodes')
     
     # Element formset
-    ElementFormSet = inlineformset_factory(Frame, Element, extra=1)
+    ElementFormSet = inlineformset_factory(Frame, Element, extra=1, form=ElementForm)
+    ElementFormSet.form = staticmethod(curry(ElementForm, frame=frame))
     element_formset = ElementFormSet(request.POST or None, instance=frame, prefix='elements')
     
     if request.POST:
