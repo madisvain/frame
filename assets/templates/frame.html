@@ -2,7 +2,9 @@
 {% load url from future %}
 
 {% block extrahead %}
-	<script type="text/javascript">
+	
+
+	<!--<script type="text/javascript">
 		window.addEvent('domready', function() {
 			var img = new Element('img', {
 				id: 'frame',
@@ -55,57 +57,24 @@
 				$('interface-content').setStyle('display', 'none');
 			});
 		});
-	</script>
+	</script>-->
 {% endblock %}
+
+{% block sidebar %}
+	<ul class="nav nav-list">
+		<li class="nav-header">Elements & Constraints</li>
+		<li><a href="#">Nodes<span class="badge" style="float: right;">{{ frame.nodes }}</span></a></li>
+		<li><a href="#">Elements<span class="badge" style="float: right;">{{ frame.elements }}</span></a></li>
+	  	<li class="divider"></li>
+		<li class="nav-header">Loads</li>
+		<li><a href="#">Concentrated<span class="badge" style="float: right;">{{ frame.elements }}</span></a></li>
+		<li><a href="#">Distributed<span class="badge" style="float: right;">{{ frame.elements }}</span></a></li>
+		<li><a href="#">Moments<span class="badge" style="float: right;">{{ frame.elements }}</span></a></li>
+	</ul>
+{% endblock %}
+
 
 {% block content %}
 	<!--<embed id="frame" src="{% url 'plot' frame.uuid 'svg' %}" type="image/svg+xml" style="width: 100%; height:100%;" />-->
 	<!--<object id="plot" data="{% url 'plot' frame.uuid 'svg' %}" type="image/svg+xml"></object>-->
-	
-	<div id="menu">
-		<ul>
-			<li id="menu-hide">
-				<h3>
-					<a href="#">
-						<img src="{{ STATIC_URL }}img/arrow-right.png" alt="" />
-						<img src="{{ STATIC_URL }}img/arrow-right.png" alt="" />
-					</a>
-				</h3>
-			</li>
-			<li class="membersandjoints">
-				<h3>
-					<a href="#" class="interface">Elements & Constraints<br/>
-						<small>
-							{{ frame.nodes }} nodes<br/>
-							{{ frame.elements }} elements
-						</small>
-					</a>
-				</h3>
-			</li>
-			<li class="loads">
-				<h3>
-					<a href="#">Loads<br/>
-						<small>
-							- concentrated<br/>
-							- distributed<br/>
-							- moments
-						</small>
-					</a>
-				</h3>
-			</li>
-		</ul>
-	</div>
-	<div id="menu-show">
-		<a href="#">
-			<img src="{{ STATIC_URL }}img/arrow-left.png" alt="" />
-			<img src="{{ STATIC_URL }}img/arrow-left.png" alt="" />
-		</a>
-	</div>
-	<div id="interface">
-		<div id="interface-title">
-			<h2></h2>
-			<a href="#" id="interface-hide">Close</a>
-		</div>
-		<div id="interface-content"></div>
-	</div>
 {% endblock %}
