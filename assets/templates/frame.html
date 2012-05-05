@@ -1,15 +1,7 @@
+{% extends 'base.html' %}
 {% load url from future %}
 
-<!DOCTYPE html>
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-	<title>Structural analysis by Madis Väin</title>
-	
-    <link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}/less/styles.less" media="screen, print">
-    
-    <script type="text/javascript" src="{{ STATIC_URL }}js/less-1.2.1.min.js"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.1/mootools-yui-compressed.js"></script>
+{% block extrahead %}
 	<script type="text/javascript">
 		window.addEvent('domready', function() {
 			var img = new Element('img', {
@@ -64,8 +56,9 @@
 			});
 		});
 	</script>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 	<!--<embed id="frame" src="{% url 'plot' frame.uuid 'svg' %}" type="image/svg+xml" style="width: 100%; height:100%;" />-->
 	<!--<object id="plot" data="{% url 'plot' frame.uuid 'svg' %}" type="image/svg+xml"></object>-->
 	
@@ -115,5 +108,4 @@
 		</div>
 		<div id="interface-content"></div>
 	</div>
-</body>
-</html>
+{% endblock %}
